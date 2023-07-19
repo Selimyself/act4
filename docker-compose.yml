@@ -1,0 +1,37 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api
+    ports: 
+      - 3000:3000
+    volumes:
+      - /api/node_modules
+      - ./api-gateway:/api
+    depends_on:
+      - auth
+
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    container_name: auth
+    volumes:
+      - /auth/node_modules
+      - ./auth:/auth
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
